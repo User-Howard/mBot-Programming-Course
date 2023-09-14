@@ -36,22 +36,24 @@ void _delay(float seconds) {
 }
 
 void setup() {
-  while(true) {
-      if(10 < ultrasonic_3.distanceCm()){
+  while (true) {
+    int distance = ultrasonic_3.distanceCm(); // 獲取距離
 
-          move(1, min(ultrasonic_3.distanceCm(), 100)*1 / 100.0 * 255);
-          _delay(0.001);
-          move(1, 0);
+    if (distance > 10) {
+      // 將距離線性映射到速度範圍
+      int speed = map(distance, 10, 100, 0, 255);
 
-      }else{
-          motor_9.run(0);
-          motor_10.run(0);
+      // 限制速度在0到255之間
+      speed = constrain(speed, 0, 255);
 
-      }
-
-      _loop();
+      move(1, speed); // 前進，速度根據距離動態調整
+    } else {
+      motor_9.run(0); // 停止左馬達
+      motor_10.run(0); // 停止右馬達
+    }
+  
+    _loop();
   }
-
 }
 
 void _loop() {
